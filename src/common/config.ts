@@ -1,0 +1,1 @@
+export const socketPath = process.env.PM4_SOCKET_PATH ?? '/var/run/pm4.sock';
