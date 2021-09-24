@@ -1,23 +1,17 @@
 import { Command } from "../../common/types";
+import { apps } from "../apps";
+import { getAppStatus } from "../common";
 
 export const statusCommand: Command = {
     name: 'status',
-    method([appNameOrId, ...args], flags) {
-        return [{
-            id: 0,
-            name: appNameOrId,
-            version: '0.0.1',
-            mode: 'fork',
-            pid: process.pid,
-            uptime: 1000,
-            restarts: 0,
-            status: 'online',
-            stats: {
-                cpu: 6.7,
-                memory: 34.5
-            },
-            user: 'alexis',
-            watching: false
-        }]
+    async method([appName, ..._args], _flags) {
+        // Return status for all apps
+        if (!appName) {
+            const appNames = [...apps.keys()];
+            return Promise.all(appNames.map(async appName => await getAppStatus(appName)));
+        }
+
+        // Return status for a single app
+        return [await getAppStatus(appName)];
     }
 };

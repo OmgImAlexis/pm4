@@ -1,0 +1,9 @@
+{
+	"apps": [{
+		"name": "hello-world",
+		"script": "./examples/hello-world.js"
+	}, {
+		"name": "hello-world2",
+		"script": "./examples/hello-world2.js"
+	}]
+}

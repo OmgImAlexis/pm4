@@ -2,11 +2,11 @@ import { sendCommand } from '../ipc-client';
 import { Command } from "../../common/types";
 import { createCliTable } from '../common';
 
-export const startCommand: Command = {
-    name: 'start',
+export const stopCommand: Command = {
+    name: 'stop',
     async method([appNameOrId, ...args], flags) {
-        // Send "start" command to god
-        const result = await sendCommand('start', [appNameOrId, ...args], flags) as any;
+        // Send "stop" command to god
+        const result = await sendCommand('stop', [appNameOrId, ...args], flags) as any;
 
         // Return JSON
         if (flags.json) {
