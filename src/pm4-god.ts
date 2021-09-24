@@ -3,6 +3,7 @@ import { daemonizeProcess } from './god/daemonize-process';
 
 // We were invoked directly, let's spawn a background daemon
 if (!('_DAEMONIZE_PROCESS' in process.env)) {
+    // Spawn the background daemon
     daemonizeProcess();
 }
 

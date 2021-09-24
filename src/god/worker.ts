@@ -15,15 +15,19 @@ export const startIpcServer = () => {
             // Ensure command exists
             const command = commands.find(command => command.name === commandName);
             if (!command) {
-                ipc.server.emit(socket, 'command:reply', new Error(`No command found for "${commandName}".`));
+                ipc.server.emit(socket, 'command:error', `No command found for "${commandName}".`);
                 return;        
             }
 
-            // Run command method
-            const result = await Promise.resolve(command.method(args, flags));
+            try {
+                // Run command method
+                const result = await Promise.resolve(command.method(args, flags));
 
-            // Reply with command result
-            ipc.server.emit(socket, 'command:reply', result);
+                // Reply with command result
+                ipc.server.emit(socket, 'command:reply', result);
+            } catch (error: unknown) {
+                ipc.server.emit(socket, 'command:error', (error as Error).message);
+            }
         });
     });
 

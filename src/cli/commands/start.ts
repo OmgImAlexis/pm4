@@ -13,7 +13,7 @@ export const startCommand: Command = {
             colWidths: [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
         });
 
-        const data = status.map(app => [app.id, app.name, app.mode, app.pid, app.uptime, app.restarts, app.status, app.stats.cpu, app.stats.memory, app.user, app.watching]);
+        const data = start.map(app => [app.id, app.name, app.mode, app.pid, app.uptime, app.restarts, app.status, app.stats.cpu, app.stats.memory, app.user, app.watching]);
 
         table.push(data[0]);
         console.log(table.toString());

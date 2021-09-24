@@ -22,13 +22,14 @@ export const sendCommand = (command: string, args?: string[], flags?: Record<str
         resolve(data);
     };
 
-    const onCommandError = (error: Error) => {
-        reject(error);
+    const onCommandError = (error: any) => {
+        ipc.disconnect(id);
+        reject(new Error(error));
     };
 
     ipc.connectTo(id, socketPath, () => {
         ipc.of[id].on('connect', onConnect);
+        ipc.of[id].on('command:error', onCommandError);
         ipc.of[id].on('command:reply', onCommandReply);
-        ipc.of[id].on('error', onCommandError);
     });
 });

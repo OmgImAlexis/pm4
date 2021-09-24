@@ -32,12 +32,15 @@ const runCommand = async (commandName: CommandNames, args?: Parameters<CommandMe
     try {
         await Promise.resolve(command?.method(args ?? [], flags ?? {}));
     } catch (error: unknown) {
-        console.log({error})
         const argString = args && args.length > 0 ? ' ' + args.join(' ') : '';
         const flagString = flags && Object.values(flags).length > 0 ? ' ' + Object.entries(flags).map(([flag, value]) => {
             return flag.length === 1 ? `-${flag} ${value}` : `--${flag}=${value}`;
         }).join(' ') : '';
-        console.error('Failed running "pm4 %s%s%s"', commandName, argString, flagString);
+        if ((error as Error).message) {
+            console.error((error as Error).message);
+        } else {
+            console.error('Failed running "pm4 %s%s%s" with "UNKNOWN_ERROR', commandName, argString, flagString);
+        }
     }
 };
 
