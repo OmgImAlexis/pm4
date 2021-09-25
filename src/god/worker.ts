@@ -10,6 +10,7 @@ const commands = Object.getOwnPropertyNames(godCommands).map(key => godCommands[
 ipc.config.silent = true;
 
 export const startIpcServer = () => {
+    logger.debug('Serving IPC @ %s', socketPath);
     ipc.serve(socketPath, () => {
         ipc.server.on('command', async (data, socket) => {
             // We should get the following object
