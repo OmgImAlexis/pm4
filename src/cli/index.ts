@@ -1,12 +1,9 @@
 import minimist from 'minimist';
 import processExists from 'process-exists';
-import debugLogger from 'debug';
 import AggregateError from 'aggregate-error';
 import { exec as execChildProcess } from 'child_process';
 import { Aliases, Command, CommandMethod, CommandNames, Commands } from '../common/types';
 import { logger } from './common';
-
-const debug = debugLogger('pm4');
 
 const commandCache = new Map<Commands | Aliases, Command>();
 
@@ -49,7 +46,7 @@ const ensureGodExists = async () => {
     const godProcessIsRunning = await processExists('pm4-god');
     if (!godProcessIsRunning) {
         return new Promise<void>((resolve, reject) => {
-            debug('Spawning god process.');
+            logger.debug('Spawning god process.');
             execChildProcess(process.env.PM4_GOD_BINARY_LOCATION ?? 'pm4-god', (error => {
                 if (error) {
                     if ((error as any).code === 127) {

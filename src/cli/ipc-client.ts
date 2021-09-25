@@ -5,7 +5,7 @@ const id = `pm4[${process.pid}]`;
 
 ipc.config.id = id;
 ipc.config.retry = 1000;
-ipc.config.logger = () => {};
+ipc.config.silent = true;
 
 export const sendCommand = (command: string, args?: string[], flags?: Record<string, any>) => new Promise((resolve, reject) => {
     const onConnect = () => {

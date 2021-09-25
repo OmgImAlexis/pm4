@@ -1,6 +1,6 @@
 import psList from 'ps-list';
 import { spawn as spawnChildProcess } from 'child_process';
-import { debug } from 'debug';
+import { logger } from './common';
 
 export const daemonizeProcess = async () => {
     const processes = await psList();
@@ -10,7 +10,7 @@ export const daemonizeProcess = async () => {
 
     // God already exists
     if (godPid) {
-        debug(`pm4-god already running with pid "${godPid}".`);
+        logger.debug(`Already running with pid "${godPid}".`);
 
         // Exit cleanly
         process.exit(0);

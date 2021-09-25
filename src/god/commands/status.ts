@@ -1,6 +1,6 @@
 import { Command } from "../../common/types";
 import { apps } from "../apps";
-import { getAppStatus } from "../common";
+import { getAppStatus } from "../common/get-app-status";
 
 export const statusCommand: Command = {
     name: 'status',

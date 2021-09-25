@@ -24,7 +24,6 @@
   "devDependencies": {
     "@types/cli-table": "^0.3.0",
     "@types/command-line-usage": "^5.0.2",
-    "@types/debug": "^4.1.7",
     "@types/minimist": "^1.2.2",
     "@types/node-ipc": "^9.1.5",
     "@types/node-netstat": "^1.8.1",
@@ -38,11 +37,12 @@
   "dependencies": {
     "cli-table": "^0.3.6",
     "command-line-usage": "^6.1.1",
-    "debug": "^4.3.2",
+    "conf": "^10.0.3",
     "execa": "^5.1.1",
     "find-process": "^1.4.5",
     "interval-to-human": "github:OmgImAlexis/interval-to-human#main",
     "minimist": "^1.2.5",
+    "nanocolors": "^0.2.3",
     "node-ipc": "^10.1.0",
     "node-netstat": "^1.8.0",
     "pidusage": "^2.0.21",

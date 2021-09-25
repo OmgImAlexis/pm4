@@ -1,9 +1,13 @@
 import ipc from 'node-ipc';
-import { socketPath } from '../common/config';
+import { socketPath, store } from '../common/config';
+import { ConfigApp } from './apps';
 import * as godCommands from './commands';
+import { logger, startApp } from './common';
 
 // Convert imports to iterable
 const commands = Object.getOwnPropertyNames(godCommands).map(key => godCommands[key as keyof typeof godCommands]);
+
+ipc.config.silent = true;
 
 export const startIpcServer = () => {
     ipc.serve(socketPath, () => {
@@ -33,3 +37,10 @@ export const startIpcServer = () => {
 
     ipc.server.start();
 };
+
+export const startSavedApps = async () => {
+    const savedApps = store.get('apps') as ConfigApp[];
+    if (!savedApps || savedApps.length === 0) return;
+    logger.debug('Starting %s app%s.', savedApps.length, savedApps.length === 1 ? '' : 's');
+    await Promise.all(savedApps.map(app => startApp(app)));
+}
