@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "target": "ES2017",
+        "module": "CommonJS",
+        "lib": [
+            "es6",
+            "es2017",
+            "esnext.asynciterable"
+        ],
+        "sourceMap": false,
+        "strict": true,
+        "types": [
+            "node"
+        ],
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "removeComments": true,
+        "rootDir": ".",
+        "outDir": "../dist/",
+        "resolveJsonModule": true,
+        "downlevelIteration": true
+    },
+    "references": [ // this is how we declare a dependency from
+        {
+            "path": "../"
+        } // this project to the one at the root dir`
+    ]
+}

@@ -4,6 +4,7 @@ import debugLogger from 'debug';
 import AggregateError from 'aggregate-error';
 import { exec as execChildProcess } from 'child_process';
 import { Aliases, Command, CommandMethod, CommandNames, Commands } from '../common/types';
+import { logger } from './common';
 
 const debug = debugLogger('pm4');
 
@@ -23,7 +24,7 @@ const loadCommands = (commands: Command[]) => {
 const runCommand = async (commandName: CommandNames, args?: Parameters<CommandMethod>[0], flags?: Parameters<CommandMethod>[1]) => {
     // If the command is missing print message
     if (!commandCache.has(commandName)) {
-        console.info('Unknown command "%s".', commandName);
+        logger.error('Unknown command "%s".', commandName);
         return;
     }
 
@@ -37,9 +38,9 @@ const runCommand = async (commandName: CommandNames, args?: Parameters<CommandMe
             return flag.length === 1 ? `-${flag} ${value}` : `--${flag}=${value}`;
         }).join(' ') : '';
         if ((error as Error).message) {
-            console.error((error as Error).message);
+            logger.error((error as Error).message);
         } else {
-            console.error('Failed running "pm4 %s%s%s" with "UNKNOWN_ERROR', commandName, argString, flagString);
+            logger.error('Failed running "pm4 %s%s%s" with "UNKNOWN_ERROR', commandName, argString, flagString);
         }
     }
 };

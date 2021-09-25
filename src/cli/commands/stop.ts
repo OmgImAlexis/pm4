@@ -1,6 +1,6 @@
 import { sendCommand } from '../ipc-client';
 import { Command } from "../../common/types";
-import { createCliTable } from '../common';
+import { createCliTable, logger } from '../common';
 
 export const stopCommand: Command = {
     name: 'stop',
@@ -10,11 +10,11 @@ export const stopCommand: Command = {
 
         // Return JSON
         if (flags.json) {
-            console.log(JSON.stringify(result, null, 2));
+            logger.print(JSON.stringify(result, null, 2));
             return;
         }
 
         // Return table
-        console.log(createCliTable([result]));
+        logger.print(createCliTable([result]));
     }
 };

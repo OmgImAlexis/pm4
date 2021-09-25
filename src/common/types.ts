@@ -1,4 +1,4 @@
-export type Commands = 'help' | 'status' | 'start' | 'stop';
+export type Commands = 'help' | 'status' | 'start' | 'stop' | 'delete';
 
 export type Aliases = 'h';
 
@@ -10,10 +10,12 @@ export type Flag = {
     optional: boolean;
 };
 
-export type CommandMethod = (args: string[], flags: {
+export type MethodFlags = {
     [arg: string]: any;
     '--'?: string[] | undefined;
-}) => void;
+};
+
+export type CommandMethod = (args: string[], flags: MethodFlags) => void;
 
 export type Command = {
     name: Commands;
