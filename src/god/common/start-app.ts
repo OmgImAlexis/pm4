@@ -6,11 +6,12 @@ import { logger } from '../common';
 export const startApp = async (config: ConfigApp, restarts = 0) => {
     if (!config.name) throw new Error(`App has no \`name\` field.`);
     if (!config.script) throw new Error(`App ${config.name} has no \`script\` field.`);
+    if (['STARTING', 'RUNNING'].includes(apps.get(config.name)?.status ?? '')) throw new Error(`Cannot start app as it's already \`${apps.get(config.name)?.status}\`.`);
 
     // Get app's name and script path
     const appName = config.name;
     const scriptPath = config.script;
-    const mode = config.mode ?? 'FORK';
+    const mode = config.mode?.toUpperCase() ?? 'FORK';
     const instances = config.instances ?? 1;
 
     // Save the child process outside of the race

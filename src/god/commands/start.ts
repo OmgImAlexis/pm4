@@ -13,12 +13,12 @@ const getConfig = (configPath: string) => {
 
 export const startCommand: Command = {
     name: 'start',
-    async method([appName, ..._args], flags) {
-        if (!appName) {
-            throw new Error('No app name provided.');
+    async method([appNameOrPath, ..._args], flags) {
+        if (!appNameOrPath) {
+            throw new Error('No app name or path provided.');
         }
 
-        // Ensure we only pass a string through
+        // Ensure the user config path is a string
         const configPath = typeof flags.config === 'string' ? flags.config : undefined;
 
         // Check if the user provided config exists
@@ -28,9 +28,23 @@ export const startCommand: Command = {
         const config = getConfig(configPath ?? './config.json');
 
         // Get the app
-        const app: Partial<App> | undefined = apps.get(appName) ?? config?.apps?.find(app => app.name === appName);
+        const app: Partial<App> | undefined = apps.get(appNameOrPath) ?? config?.apps?.find(app => app.name === appNameOrPath);
         if (!app) {
-            throw new Error(`No app found with name \`${appName}\`.`);
+            // Check if maybe this was a path they passed
+            if (!existsSync(appNameOrPath)) {
+                throw new Error(`No app found with name \`${appNameOrPath}\`.`);
+            }
+
+            // We were only given a path so we need to generate the app ourselves
+            const appName = appNameOrPath.split('/').pop()?.split('.')[0];
+            if (!appName) throw new Error(`Failed generating app name from ${appNameOrPath}`);
+            await startApp({
+                name: appName,
+                script: appNameOrPath              
+            });
+
+            // Return current status of the app
+            return getAppStatus(appName);
         }
 
         // If the app isn't stopped/crashed then bail
@@ -42,6 +56,6 @@ export const startCommand: Command = {
         if (app.script) await startApp(app);
         
         // Return current status of the app
-        return getAppStatus(appName);
+        return getAppStatus(appNameOrPath);
     }
 };

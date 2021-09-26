@@ -9,7 +9,6 @@ export const stopCommand: Command = {
         // Get the app
         const app = apps.get(appName);
         if (!app) throw new Error(`No app found with name \`${appName}\`.`);
-        if (['STOPPED', 'CRASHED'].includes(app.status)) throw new Error(`Cannot stop app as it's already \`${app.status}\`.`);
 
         // Stop the app
         await stopApp(app);
