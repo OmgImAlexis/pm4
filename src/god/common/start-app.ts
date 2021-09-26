@@ -120,6 +120,8 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
                     resolve();
                 }
             });
+
+            logger.debug('Waiting for %s to start', appName);
         }),
         new Promise<void>((_resolve, reject) => {
             setTimeout(() => {
