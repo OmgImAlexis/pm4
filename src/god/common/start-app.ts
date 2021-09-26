@@ -1,4 +1,4 @@
-import { join as joinPath } from 'path';
+import { join as joinPath, resolve as resolvePath } from 'path';
 import { createWriteStream, mkdirSync } from 'fs';
 import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
@@ -12,7 +12,7 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
 
     // Get app's name and script path
     const appName = config.name;
-    const scriptPath = config.script;
+    const scriptPath = resolvePath(config.script);
     const mode = config.mode?.toUpperCase() as App['mode'] ?? 'FORK';
     const instances = config.instances ?? 1;
 
