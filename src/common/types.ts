@@ -1,4 +1,4 @@
-export type Commands = 'help' | 'status' | 'start' | 'stop' | 'delete' | 'save';
+export type Commands = 'help' | 'status' | 'start' | 'stop' | 'restart' | 'delete' | 'save';
 
 export type Aliases = 'h';
 

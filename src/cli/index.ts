@@ -1,6 +1,7 @@
 import minimist from 'minimist';
 import processExists from 'process-exists';
 import AggregateError from 'aggregate-error';
+import { serializeError } from 'serialize-error';
 import { exec as execChildProcess } from 'child_process';
 import { Aliases, Command, CommandMethod, CommandNames, Commands } from '../common/types';
 import { logger } from './common';
@@ -35,6 +36,13 @@ const runCommand = async (commandName: CommandNames, args?: Parameters<CommandMe
             return flag.length === 1 ? `-${flag} ${value}` : `--${flag}=${value}`;
         }).join(' ') : '';
         if ((error as Error).message) {
+            // Return JSON
+            if (flags?.json) {
+                logger.print(JSON.stringify(serializeError(error), null, 2));
+                return;
+            }
+
+            // Print error
             logger.error((error as Error).message);
         } else {
             logger.error('Failed running "pm4 %s%s%s" with "UNKNOWN_ERROR', commandName, argString, flagString);
