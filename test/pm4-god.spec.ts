@@ -26,4 +26,6 @@ test('Can start and stop an app', async t => {
 
     // Stop the app
     await stopApp(apps.get(appName));
+
+    t.is(apps.get(appName).status, 'STOPPED');
 });
