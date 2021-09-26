@@ -1,3 +1,4 @@
+export * from './delete';
 export * from './save';
 export * from './start';
 export * from './status';
