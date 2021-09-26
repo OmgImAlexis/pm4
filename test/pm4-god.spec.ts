@@ -19,7 +19,7 @@ test('Can start and stop an app', async t => {
     }, 0, false);
 
     // Wait 1s for the app to be ready
-    await sleep(1_000);
+    await sleep(5_000);
 
     // Check the app is started
     t.is(apps.get(appName).status, 'RUNNING');
