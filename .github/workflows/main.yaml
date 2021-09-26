@@ -23,5 +23,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run build
-      - run: npm run coverage
+      - run: npm run type:coverage
+      - run: npm run test:coverage
       - run: npm run bundle-size -- --enable-github-checks
