@@ -129,7 +129,7 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             }, 30_000);
         })
     ]).catch(error => {
-        logger.error(error.message);
+        logger.error('Failed spawning %s with %s', appName, error);
         childProcess.kill();
     });
 };
