@@ -66,10 +66,11 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
     
             childProcess.on('exit', code => {
                 const app = apps.get(appName);
-                if (!app) return;
-
                 const exitCode = code ?? 0;
                 logger.debug('%s exited with code %s', appName, exitCode);
+                if (!app) {
+                    return;
+                }
 
                 // Update the apps store
                 const status = exitCode === 0 ? 'STOPPED' : 'CRASHED';
