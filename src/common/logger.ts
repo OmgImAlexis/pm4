@@ -1,6 +1,5 @@
 import { cyan, green, yellow, red } from 'nanocolors';
-
-const isDebug = process.env.DEBUG !== undefined;
+import { isDebug } from './config';
 
 export const createLogger = (namespace: string) => {
     namespace = namespace.toUpperCase();

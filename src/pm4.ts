@@ -1,7 +1,7 @@
 import * as cliCommands from './cli/commands';
 import { cli } from './cli';
 import { logger } from './cli/common';
-import { version } from '../package.json';
+import { printDiagnosticInfo } from './common/print-diagnostic-info';
 
 // Convert imports to iterable
 const commands = Object.getOwnPropertyNames(cliCommands).map(key => cliCommands[key as keyof typeof cliCommands]);
@@ -32,7 +32,7 @@ const handleCliError = (error: any) => {
     process.exit(1);
 };
 
-logger.debug('Version: %s', version);
+printDiagnosticInfo();
 
 // Process cli command
 cli(process.argv.slice(2), commands).catch(error => handleCliError(error));

@@ -6,13 +6,13 @@ import { logger } from './logger';
 import { getPortsUsed } from './get-ports-used';
 
 export const getAppStatus = async (appName: string) => {
-    const app = apps.get(appName);
+    let app = apps.get(appName);
     if (!app) {
         throw new Error(`No app found with name \`${appName}\`.`);
     }
 
     // Get memory, cpu, etc.
-    const stats = app.process?.pid ? await pidusage(app.process?.pid).catch(error => { logger.debug(error); return undefined; }) : undefined;
+    const stats = app.process?.pid ? await pidusage(app.process?.pid).catch(() => undefined) : undefined;
     const info = app.process?.pid ? await find('pid', app.process?.pid).then(processes => processes[0]).catch(error => { logger.debug(error); return undefined; }) : undefined;
     const user = info?.uid ? await execa('id', ['-un', `${info?.uid}`]).then(_ => _.stdout).catch(error => { logger.debug(error); return undefined; }) : undefined;
     const ports = app.process?.pid ? await getPortsUsed(app.process.pid) : [];

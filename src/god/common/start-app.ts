@@ -1,3 +1,4 @@
+import { createWriteStream } from 'fs';
 import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
 import { logger } from '../common';
@@ -9,7 +10,7 @@ export const startApp = async (config: ConfigApp, restarts = 0) => {
     // Get app's name and script path
     const appName = config.name;
     const scriptPath = config.script;
-    const mode = config.mode ?? 'fork';
+    const mode = config.mode ?? 'FORK';
     const instances = config.instances ?? 1;
 
     // Save the child process outside of the race
@@ -24,7 +25,8 @@ export const startApp = async (config: ConfigApp, restarts = 0) => {
         new Promise<void>((resolve, reject) => {
             // Fork the child process
             childProcess = forkProcess(scriptPath, {
-                silent: true
+                silent: true,
+                stdio: 'pipe'
             });
             
             // The initial app
@@ -39,6 +41,14 @@ export const startApp = async (config: ConfigApp, restarts = 0) => {
 
             // Save a reference to this child process for later
             apps.set(appName, app);
+
+            // Create stdout and stderr log files
+            const logConsoleStream = createWriteStream(`/var/log/pm4/apps/${appName}.stdout.log`, { flags: 'a' });
+            const logErrorStream = createWriteStream(`/var/log/pm4/apps/${appName}.stderr.log`, { flags: 'a' });
+
+            // redirect stdout and stderr to log files
+            childProcess.stdout?.pipe(logConsoleStream);
+            childProcess.stderr?.pipe(logErrorStream);
             
             childProcess.stderr?.on('data', data => {
                 reject(new Error(data));
@@ -48,26 +58,30 @@ export const startApp = async (config: ConfigApp, restarts = 0) => {
                 const app = apps.get(appName);
                 if (!app) return;
 
-                // If this app was running then update the apps store
-                if (app?.status === 'RUNNING' && app.process?.pid === childProcess.pid) {
-                    apps.set(appName, {
-                        ...app,
-                        process: undefined,
-                        status: code === 0 ? 'STOPPED' : 'CRASHED',
-                        restarts: code === 0 ? 0 : ((restarts < 5) ? (app.restarts + 1) : app.restarts)
-                    });
+                const exitCode = code ?? 0;
+                logger.debug('%s exited with code %s', appName, exitCode);
 
-                    // Restart the app
-                    if (code !== 0 && restarts < 5) {
-                        logger.info('Restarting %s %s/%s', app.name, restarts + 1, 5);
-                        startApp(app, restarts + 1);
-                        return;
-                    }
+                // Update the apps store
+                const status = exitCode === 0 ? 'STOPPED' : 'CRASHED';
+                logger.debug('Setting status of %s to %s', appName, status);
+                apps.set(appName, {
+                    ...app,
+                    process: undefined,
+                    status,
+                    restarts: exitCode === 0 ? 0 : ((restarts < 5) ? (app.restarts + 1) : app.restarts)
+                });
+
+                // Restart the app
+                if (exitCode !== 0 && restarts < 5) {
+                    logger.info('Restarting %s %s/%s', app.name, restarts + 1, 5);
+                    startApp(app, restarts + 1);
+                    return;
                 }
             });
              
             childProcess.on('message', (message: string) => {
                 if (message === 'ready') {
+                    logger.debug('%s is ready', app.name);
                     apps.set(appName, {
                         ...app,
                         status: 'RUNNING'
