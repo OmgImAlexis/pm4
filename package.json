@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "ava -v",
+    "test": "DEBUG=pm4 ava -v",
     "prepare": "npm run build --silent",
     "clean": "del dist",
     "build": "npm run clean && npm run build:source",
