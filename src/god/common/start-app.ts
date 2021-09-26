@@ -1,4 +1,4 @@
-import { createWriteStream } from 'fs';
+import { createWriteStream, mkdirSync } from 'fs';
 import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
 import { logger } from '../common';
@@ -43,9 +43,13 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             // Save a reference to this child process for later
             apps.set(appName, app);
 
+            // Ensure the directories exist for the log files
+            const logDirectory = '/var/log/pm4/apps/';
+            mkdirSync(logDirectory, { recursive: true });
+
             // Create stdout and stderr log files
-            const logConsoleStream = createWriteStream(`/var/log/pm4/apps/${appName}.stdout.log`, { flags: 'a' });
-            const logErrorStream = createWriteStream(`/var/log/pm4/apps/${appName}.stderr.log`, { flags: 'a' });
+            const logConsoleStream = createWriteStream(`${logDirectory}${appName}.stdout.log`, { flags: 'a' });
+            const logErrorStream = createWriteStream(`${logDirectory}${appName}.stderr.log`, { flags: 'a' });
 
             // redirect stdout and stderr to log files
             childProcess.stdout?.pipe(logConsoleStream);
