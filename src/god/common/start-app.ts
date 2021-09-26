@@ -1,7 +1,9 @@
+import { join as joinPath } from 'path';
 import { createWriteStream, mkdirSync } from 'fs';
 import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
 import { logger } from '../common';
+import { logsPath } from '../../common/config';
 
 export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = true) => {
     if (!config.name) throw new Error(`App has no \`name\` field.`);
@@ -44,25 +46,19 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             apps.set(appName, app);
 
             // Ensure the directories exist for the log files
-            const logDirectory = '/var/log/pm4/apps/';
+            const logDirectory = joinPath(logsPath, 'apps');
             mkdirSync(logDirectory, { recursive: true });
 
             // Create stdout and stderr log files
-            const logConsoleStream = createWriteStream(`${logDirectory}${appName}.stdout.log`, { flags: 'a' });
-            const logErrorStream = createWriteStream(`${logDirectory}${appName}.stderr.log`, { flags: 'a' });
+            const logConsoleStream = createWriteStream(joinPath(logDirectory, `${appName}.stdout.log`), { flags: 'a' });
+            const logErrorStream = createWriteStream(joinPath(logDirectory, `${appName}.stderr.log`), { flags: 'a' });
 
             // redirect stdout and stderr to log files
             childProcess.stdout?.pipe(logConsoleStream);
             childProcess.stderr?.pipe(logErrorStream);
-
-            // This will be set only if the process pushes data to stderr
-            // The last chunk of data pushed to stderr will appear here
-            // This is mainly used on exit to show the crash
-            let lastKnownError: Error;
             
             childProcess.stderr?.on('data', data => {
-                lastKnownError = new Error(data);
-                reject(lastKnownError);
+                reject(data);
             });
     
             childProcess.on('exit', code => {

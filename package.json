@@ -99,7 +99,6 @@
     "extensions": [
       "ts"
     ],
-    "timeout": "1m",
     "require": [
       "ts-node/register/transpile-only"
     ]

@@ -16,13 +16,21 @@ export const daemonizeProcess = async () => {
         process.exit(0);
     }
 
-    // Spawn background daemon
-    spawnChildProcess(process.execPath, process.argv.slice(2), {
+    // If you're using a js bin file this needs to be slice(1)
+    // If you're using a nexe bin file this needs to be slice(2)
+    const args = process.argv.slice(1);
+
+    // Spawn daemon
+    const daemon = spawnChildProcess(process.execPath, args, {
         // In the parent set the tracking environment variable
         env: Object.assign(process.env, { _DAEMONIZE_PROCESS: '1' }),
         stdio: 'ignore',
         detached: true
-    }).unref();
+    });
+
+    // Background the process
+    daemon.unref();
+    logger.debug(`Daemonized process "${daemon.pid}".`);
 
     // Exit cleanly
     process.exit(0);

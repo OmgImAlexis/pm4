@@ -14,7 +14,7 @@ export const deleteCommand: Command = {
             return;
         }
 
-        // Return table
+        // Return deleted comment
         logger.info(result);
     }
 };
