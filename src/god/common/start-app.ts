@@ -1,5 +1,5 @@
 import { join as joinPath, resolve as resolvePath } from 'path';
-import { createWriteStream, mkdirSync } from 'fs';
+import { createWriteStream, mkdirSync, existsSync } from 'fs';
 import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
 import { logger } from '../common';
@@ -49,7 +49,10 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
 
             // Ensure the directories exist for the log files
             const logDirectory = joinPath(logsPath, 'apps');
-            mkdirSync(logDirectory, { recursive: true });
+            if (!existsSync(logDirectory)) {
+                mkdirSync(logDirectory, { recursive: true });
+                logger.debug('Creating log directory %s', logDirectory);
+            }
 
             // Create stdout and stderr log files
             const logConsoleStream = createWriteStream(joinPath(logDirectory, `${appName}.stdout.log`), { flags: 'a' });
