@@ -60,6 +60,7 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             childProcess.stderr?.pipe(logErrorStream);
             
             childProcess.stderr?.on('data', data => {
+                logger.debug('%s threw an error %s', appName, data);
                 reject(data);
             });
     
