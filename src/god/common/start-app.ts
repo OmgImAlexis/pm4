@@ -21,6 +21,13 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
     let childProcess: ChildProcess;
 
     logger.debug('Starting %s in %s mode.', appName, mode);
+    
+    // Ensure the directories exist for the log files
+    const logDirectory = joinPath(logsPath, 'apps');
+    if (!existsSync(logDirectory)) {
+        logger.debug('Creating log directory %s', logDirectory);
+        mkdirSync(logDirectory, { recursive: true });
+    }
 
     // Either the new process will spawn
     // or it'll timeout/disconnect/exit
@@ -47,13 +54,6 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             // Save a reference to this child process for later
             apps.set(appName, app);
 
-            // Ensure the directories exist for the log files
-            const logDirectory = joinPath(logsPath, 'apps');
-            if (!existsSync(logDirectory)) {
-                mkdirSync(logDirectory, { recursive: true });
-                logger.debug('Creating log directory %s', logDirectory);
-            }
-
             // Create stdout and stderr log files
             const logConsoleStream = createWriteStream(joinPath(logDirectory, `${appName}.stdout.log`), { flags: 'a' });
             const logErrorStream = createWriteStream(joinPath(logDirectory, `${appName}.stderr.log`), { flags: 'a' });
@@ -65,10 +65,10 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             // If in debug then relay logs to god process's stdout/stderr
             if (isDebug) {
                 childProcess.stdout?.on('data', data => {
-                    logger.debug('[%s] %s', appName, data);
+                    logger.debug('[%s] %s', appName, data.toString().replace(/\n+$/, ''));
                 });
                 childProcess.stderr?.on('data', data => {
-                    logger.error('[%s] %s', appName, data);
+                    logger.error('[%s] %s', appName, data.toString().replace(/\n+$/, ''));
                 });
             }
 
