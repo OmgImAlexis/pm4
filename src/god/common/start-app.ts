@@ -3,7 +3,7 @@ import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
 import { logger } from '../common';
 
-export const startApp = async (config: ConfigApp, restarts = 0) => {
+export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = true) => {
     if (!config.name) throw new Error(`App has no \`name\` field.`);
     if (!config.script) throw new Error(`App ${config.name} has no \`script\` field.`);
     if (['STARTING', 'RUNNING'].includes(apps.get(config.name)?.status ?? '')) throw new Error(`Cannot start app as it's already \`${apps.get(config.name)?.status}\`.`);
@@ -11,7 +11,7 @@ export const startApp = async (config: ConfigApp, restarts = 0) => {
     // Get app's name and script path
     const appName = config.name;
     const scriptPath = config.script;
-    const mode = config.mode?.toUpperCase() ?? 'FORK';
+    const mode = config.mode?.toUpperCase() as App['mode'] ?? 'FORK';
     const instances = config.instances ?? 1;
 
     // Save the child process outside of the race
@@ -50,9 +50,15 @@ export const startApp = async (config: ConfigApp, restarts = 0) => {
             // redirect stdout and stderr to log files
             childProcess.stdout?.pipe(logConsoleStream);
             childProcess.stderr?.pipe(logErrorStream);
+
+            // This will be set only if the process pushes data to stderr
+            // The last chunk of data pushed to stderr will appear here
+            // This is mainly used on exit to show the crash
+            let lastKnownError: Error;
             
             childProcess.stderr?.on('data', data => {
-                reject(new Error(data));
+                lastKnownError = new Error(data);
+                reject(lastKnownError);
             });
     
             childProcess.on('exit', code => {
@@ -73,7 +79,7 @@ export const startApp = async (config: ConfigApp, restarts = 0) => {
                 });
 
                 // Restart the app
-                if (exitCode !== 0 && restarts < 5) {
+                if (shouldRestart && exitCode !== 0 && restarts < 5) {
                     logger.info('Restarting %s %s/%s', app.name, restarts + 1, 5);
                     startApp(app, restarts + 1);
                     return;

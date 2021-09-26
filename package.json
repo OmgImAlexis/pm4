@@ -12,8 +12,12 @@
     "build:cli": "tsup ./src/pm4.ts --silent",
     "build:god": "tsup ./src/pm4-god.ts --silent",
     "build:binaries": "npm run build:cli-binary && npm run build:god-binary",
-    "build:cli-binary": "nexe ./dist/pm4.js --output bin/pm4",
-    "build:god-binary": "nexe ./dist/pm4-god.js --output bin/pm4-god"
+    "build:cli-binary": "nexe ./dist/pm4.js --silent --output bin/pm4",
+    "build:god-binary": "nexe ./dist/pm4-god.js --silent --output bin/pm4-god",
+    "coverage": "npm run type:coverage && npm run test:coverage",
+    "test:coverage": "nyc npm test",
+    "type:coverage": "typescript-coverage-report -p ./src/tsconfig.json",
+    "bundle-size": "bundlesize"
   },
   "keywords": [
     "process",
@@ -29,26 +33,72 @@
     "@types/node-netstat": "^1.8.1",
     "@types/pidusage": "^2.0.1",
     "aggregate-error": "^4.0.0",
-    "del-cli": "^4.0.1",
-    "nexe": "^4.0.0-beta.18",
-    "tsup": "^5.1.0",
-    "typescript": "^4.4.3"
-  },
-  "dependencies": {
+    "ava": "^3.15.0",
+    "bundlesize2": "0.0.30",
     "cli-table3": "^0.6.0",
     "command-line-usage": "^6.1.1",
     "conf": "^10.0.3",
+    "del-cli": "^4.0.1",
     "execa": "^5.1.1",
     "find-process": "^1.4.5",
     "interval-to-human": "github:OmgImAlexis/interval-to-human#main",
     "minimist": "^1.2.5",
-    "nanocolors": "^0.2.3",
+    "nanocolors": "^0.2.6",
+    "nexe": "^4.0.0-beta.18",
     "node-ipc": "^10.1.0",
     "node-netstat": "^1.8.0",
+    "nyc": "^15.1.0",
     "pidusage": "^2.0.21",
     "pretty-bytes": "^5.6.0",
     "process-exists": "^4.1.0",
     "ps-list": "^7.2.0",
-    "serialize-error": "^8.1.0"
+    "serialize-error": "^8.1.0",
+    "ts-node": "^10.2.1",
+    "tsup": "^5.1.0",
+    "typescript": "^4.4.3",
+    "typescript-coverage-report": "^0.6.0"
+  },
+  "typeCoverage": {
+    "atLeast": 95
+  },
+  "bundlesize": [
+    {
+      "path": "./dist/pm4.js",
+      "maxSize": "150 kB",
+      "compression": "brotli"
+    },
+    {
+      "path": "./dist/pm4.js",
+      "maxSize": "140 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./dist/pm4.js",
+      "maxSize": "1 MB",
+      "compression": "none"
+    },
+    {
+      "path": "./dist/pm4-god.js",
+      "maxSize": "120 kB",
+      "compression": "brotli"
+    },
+    {
+      "path": "./dist/pm4-god.js",
+      "maxSize": "150 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./dist/pm4-god.js",
+      "maxSize": "800 kB",
+      "compression": "none"
+    }
+  ],
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register/transpile-only"
+    ]
   }
 }

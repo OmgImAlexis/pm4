@@ -2,3 +2,6 @@ bin
 dist
 node_modules
 .vscode
+coverage
+coverage-ts
+.nyc_output
