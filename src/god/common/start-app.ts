@@ -20,12 +20,14 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
     // This is to allow us to kill it if the timeout is quicker
     let childProcess: ChildProcess;
 
-    logger.debug('Starting %s in %s mode with %s instance%s.', appName, mode, instances, instances === 1 ? '' : 's');
+    logger.debug('Starting %s in %s mode.', appName, mode);
 
     // Either the new process will spawn
     // or it'll timeout/disconnect/exit
     await Promise.race([
         new Promise<void>((resolve, reject) => {
+            logger.debug('Spawning %s instance%s of %s from %s', instances, instances === 1 ? '' : 's', appName, scriptPath);
+
             // Fork the child process
             childProcess = forkProcess(scriptPath, {
                 silent: true,
