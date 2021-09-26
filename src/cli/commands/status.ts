@@ -4,6 +4,7 @@ import { createCliTable, logger } from '../common';
 
 export const statusCommand: Command = {
     name: 'status',
+    description: 'Get the status of an app or all apps',
     async method([appNameOrId, ...args], flags) {
         // Send "status" command to god
         const result = await sendCommand('status', [appNameOrId, ...args], flags) as any[];

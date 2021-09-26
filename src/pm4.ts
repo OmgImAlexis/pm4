@@ -5,7 +5,7 @@ import { logger } from './cli/common';
 import { printDiagnosticInfo } from './common/print-diagnostic-info';
 
 // Convert imports to iterable
-const commands = Object.getOwnPropertyNames(cliCommands).map(key => cliCommands[key as keyof typeof cliCommands]);
+const commands = Object.getOwnPropertyNames(cliCommands).filter(key => key !== '__esModule').map(key => cliCommands[key as keyof typeof cliCommands]);
 
 const isAggregateError = (error: unknown): error is AggregateError => error instanceof AggregateError;
 const isError = (error: unknown): error is Error => error instanceof Error;

@@ -4,6 +4,7 @@ import { createCliTable, logger } from '../common';
 
 export const stopCommand: Command = {
     name: 'stop',
+    description: 'Stop an app',
     async method([appNameOrId, ...args], flags) {
         // Send "stop" command to god
         const result = await sendCommand('stop', [appNameOrId, ...args], flags) as any;

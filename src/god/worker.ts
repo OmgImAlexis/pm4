@@ -5,7 +5,7 @@ import * as godCommands from './commands';
 import { logger, startApp } from './common';
 
 // Convert imports to iterable
-const commands = Object.getOwnPropertyNames(godCommands).map(key => godCommands[key as keyof typeof godCommands]);
+const commands = Object.getOwnPropertyNames(godCommands).filter(key => key !== '__esModule').map(key => godCommands[key as keyof typeof godCommands]);
 
 ipc.config.silent = true;
 

@@ -4,6 +4,7 @@ import { createCliTable, logger } from '../common';
 
 export const restartCommand: Command = {
     name: 'restart',
+    description: 'Restart an app',
     async method([appNameOrPath, ...args], flags) {
         // Send "stop" command to god
         await sendCommand('stop', [appNameOrPath, ...args], flags) as any;

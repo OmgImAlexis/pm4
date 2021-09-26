@@ -4,6 +4,7 @@ import { logger } from '../common';
 
 export const deleteCommand: Command = {
     name: 'delete',
+    description: 'Delete an app',
     async method([appNameOrId, ...args], flags) {
         // Send "delete" command to god
         const result = await sendCommand('delete', [appNameOrId, ...args], flags) as any;
