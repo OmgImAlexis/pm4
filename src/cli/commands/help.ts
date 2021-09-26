@@ -25,6 +25,6 @@ export const helpCommand: Command = {
     name: 'help',
     alias: 'h',
     method() {
-        logger.info(usage);
+        logger.print(usage);
     }
 };
