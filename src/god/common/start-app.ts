@@ -128,7 +128,8 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
                 reject(new Error(`Timed-out starting \`${config.name}\`.`));
             }, 30_000);
         })
-    ]).catch(() => {
+    ]).catch(error => {
+        logger.error(error);
         childProcess.kill();
     });
 };
