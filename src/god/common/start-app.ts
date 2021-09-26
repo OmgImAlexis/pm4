@@ -3,7 +3,7 @@ import { createWriteStream, mkdirSync, existsSync } from 'fs';
 import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
 import { logger } from '../common';
-import { logsPath } from '../../common/config';
+import { isDebug, logsPath } from '../../common/config';
 
 export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = true) => {
     if (!config.name) throw new Error(`App has no \`name\` field.`);
@@ -62,19 +62,29 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             childProcess.stdout?.pipe(logConsoleStream);
             childProcess.stderr?.pipe(logErrorStream);
 
+            // If in debug then relay logs to god process's stdout/stderr
+            if (isDebug) {
+                childProcess.stdout?.on('data', data => {
+                    logger.debug('[%s] %s', appName, data);
+                });
+                childProcess.stderr?.on('data', data => {
+                    logger.error('[%s] %s', appName, data);
+                });
+            }
+
             // App has started but isn't ready
-            childProcess.stdout?.on('data', () => {
+            childProcess.stdout?.once('data', () => {
                 logger.debug('%s has started', app.name);
             });
 
             // App has thrown an error
-            childProcess.stderr?.on('data', data => {
+            childProcess.stderr?.once('data', data => {
                 logger.debug('%s threw an error %s', appName, data);
                 reject(data);
             });
 
             // App has exited
-            childProcess.on('exit', code => {
+            childProcess.once('exit', code => {
                 const app = apps.get(appName);
                 const exitCode = code ?? 0;
                 logger.debug('%s exited with code %s', appName, exitCode);
