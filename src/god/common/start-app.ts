@@ -33,7 +33,7 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
                 silent: true,
                 stdio: 'pipe'
             });
-            
+
             // The initial app
             const app: App = {
                 name: appName,
@@ -61,12 +61,19 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             // redirect stdout and stderr to log files
             childProcess.stdout?.pipe(logConsoleStream);
             childProcess.stderr?.pipe(logErrorStream);
-            
+
+            // App has started but isn't ready
+            childProcess.stdout?.on('data', () => {
+                logger.debug('%s has started', app.name);
+            });
+
+            // App has thrown an error
             childProcess.stderr?.on('data', data => {
                 logger.debug('%s threw an error %s', appName, data);
                 reject(data);
             });
-    
+
+            // App has exited
             childProcess.on('exit', code => {
                 const app = apps.get(appName);
                 const exitCode = code ?? 0;
@@ -92,7 +99,7 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
                     return;
                 }
             });
-             
+
             childProcess.on('message', (message: string) => {
                 if (message === 'ready') {
                     logger.debug('%s is ready', app.name);
