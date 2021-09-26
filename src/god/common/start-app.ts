@@ -129,7 +129,7 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
             }, 30_000);
         })
     ]).catch(error => {
-        logger.error(error);
+        logger.error(error.message);
         childProcess.kill();
     });
 };
