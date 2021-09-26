@@ -1,8 +1,8 @@
 import { version } from '../../package.json';
-import { logger } from '../god/common';
+import { createLogger } from './logger';
 import { isDebug } from './config';
 
-export const printDiagnosticInfo = () => {
+export const printDiagnosticInfo = (logger: ReturnType<typeof createLogger>) => {
     if (!isDebug) return;
     logger.print('========================================================');
     logger.debug('PM4 version: %s', version);

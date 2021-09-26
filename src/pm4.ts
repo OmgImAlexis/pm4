@@ -32,7 +32,7 @@ const handleCliError = (error: any) => {
     process.exit(1);
 };
 
-printDiagnosticInfo();
+printDiagnosticInfo(logger);
 
 // Process cli command
 cli(process.argv.slice(2), commands).catch(error => handleCliError(error));

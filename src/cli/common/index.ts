@@ -2,7 +2,7 @@ import Table from "cli-table3";
 import { cyan, gray, green, red } from "nanocolors";
 import prettyTime from 'interval-to-human';
 import prettyBytes from "pretty-bytes";
-import { App } from "../../god/apps";
+import type { App } from "../../god/apps";
 
 interface AppInfo extends App {
     mode: 'FORK' | 'CLUSTER';

@@ -12,10 +12,10 @@ export const createLogger = (namespace: string) => {
             console.debug(`${green(`[${namespace}]`)} ${message}`, ...args);
         },
         warning(message: string, ...args: any[]) {
-            console.warn(`${yellow(`[${namespace}]`)} ${message}`, ...args);
+            console.warn(`${yellow(`[${namespace}][WARNING]`)} ${message}`, ...args);
         },
         error(message: string | Error, ...args: any[]) {
-            console.error(`${red(`[${namespace}]`)} ${message}`, ...args);
+            console.error(`${red(`[${namespace}][ERROR]`)} ${message}`, ...args);
         },
         print(message: string, ...args: any[]) {
             console.log(message, ...args);

@@ -1,8 +1,9 @@
 import { startIpcServer, startSavedApps } from './god/worker';
 import { daemonizeProcess } from './god/daemonize-process';
 import { printDiagnosticInfo } from './common/print-diagnostic-info';
+import { logger } from './god/common';
 
-printDiagnosticInfo();
+printDiagnosticInfo(logger);
 
 // We were invoked directly, let's spawn a background daemon
 if (!('_DAEMONIZE_PROCESS' in process.env)) {
