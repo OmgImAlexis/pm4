@@ -1,13 +1,20 @@
 import { sendCommand } from '../ipc-client';
-import { Command } from "../../common/types";
+import { CliCommand } from "../../common/types";
 import { createCliTable, logger } from '../common';
+import { AppInfo } from '../../god/apps';
 
-export const stopCommand: Command = {
+export const stopCommand: CliCommand = {
     name: 'stop',
     description: 'Stop an app',
     async method([appNameOrId, ...args], flags) {
         // Send "stop" command to god
-        const result = await sendCommand('stop', [appNameOrId, ...args], flags) as any;
+        const result = await sendCommand('stop', [appNameOrId, ...args], flags)
+            // Ensure god returned an AppInfo
+            .then(data => AppInfo.safeParseAsync(data));
+
+
+        // Validate result
+        if (!result.success) throw new Error('Invalid response from god process.');
 
         // Return JSON
         if (flags.json) {

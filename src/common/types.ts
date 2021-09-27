@@ -17,9 +17,16 @@ export type MethodFlags = {
 
 export type CommandMethod = (args: string[], flags: MethodFlags) => void;
 
-export type Command = {
+export type CliCommand = {
     name: Commands;
     description: string;
+    method: CommandMethod;
+    alias?: Aliases;
+    flags?: Flag[];
+};
+
+export type GodCommand = {
+    name: Commands;
     method: CommandMethod;
     alias?: Aliases;
     flags?: Flag[];

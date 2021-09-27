@@ -1,10 +1,10 @@
 import commandLineUsage from 'command-line-usage';
-import { Command } from "../../common/types";
+import { CliCommand } from "../../common/types";
 import { description } from '../../../package.json';
 import { logger } from '../common';
 import * as cliCommands from './index';
 
-export const helpCommand: Command = {
+export const helpCommand: CliCommand = {
     name: 'help',
     alias: 'h',
     description: 'Display help information.',

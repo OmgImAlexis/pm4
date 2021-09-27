@@ -4,13 +4,13 @@ import AggregateError from 'aggregate-error';
 import { serializeError } from 'serialize-error';
 import locatePath from 'locate-path';
 import { exec as execChildProcess } from 'child_process';
-import { Aliases, Command, CommandMethod, CommandNames, Commands } from '../common/types';
+import { Aliases, CliCommand, CommandMethod, CommandNames, Commands } from '../common/types';
 import { logger } from './common';
 import psList from 'ps-list';
 
-const commandCache = new Map<Commands | Aliases, Command>();
+const commandCache = new Map<Commands | Aliases, CliCommand>();
 
-const loadCommands = (commands: Command[]) => {
+const loadCommands = (commands: CliCommand[]) => {
     // Load commands
     for (const command of commands) {
         commandCache.set(command.name, command);
@@ -95,7 +95,7 @@ const ensureGodExists = async () => {
     }
 };
 
-export const cli = async (argv: string[], commands: Command[]) => {
+export const cli = async (argv: string[], commands: CliCommand[]) => {
     // Process cli arguments
     const { _, ...flags } = minimist(argv);
     const [commandName, ...args] = _;

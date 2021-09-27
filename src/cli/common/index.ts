@@ -2,20 +2,7 @@ import Table from "cli-table3";
 import { cyan, gray, green, red } from "nanocolors";
 import prettyTime from 'interval-to-human';
 import prettyBytes from "pretty-bytes";
-import type { App } from "../../god/apps";
-
-interface AppInfo extends App {
-    mode: 'FORK' | 'CLUSTER';
-    pid: number;
-    ports: number[];
-    uptime: number;
-    stats?: {
-        cpu: number;
-        memory: number;
-    }
-    user: string;
-    watching: boolean;
-}
+import { AppInfo } from "../../god/apps";
 
 export const createCliTable = (apps: AppInfo[]) => {
     const table = new Table({

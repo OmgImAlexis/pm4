@@ -9,13 +9,20 @@ const commands = Object.getOwnPropertyNames(godCommands).filter(key => key !== '
 
 ipc.config.silent = true;
 
+type Data = {
+    id: string;
+    command: string;
+    args: any[];
+    flags: Record<string, number | string>;
+}
+
 export const startIpcServer = () => {
     logger.debug('Serving IPC @ %s', socketPath);
     ipc.serve(socketPath, () => {
         ipc.server.on('command', async (data, socket) => {
             // We should get the following object
             // data.id = 'pm4', data.command = status, data.args = [], data.flags = {}
-            const { command: commandName, args, flags } = data as any;
+            const { command: commandName, args, flags } = data as Data;
 
             // Ensure command exists
             const command = commands.find(command => command.name === commandName);

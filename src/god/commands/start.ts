@@ -1,5 +1,5 @@
 import { readFileSync, existsSync } from 'fs';
-import { Command } from "../../common/types";
+import { GodCommand } from "../../common/types";
 import { App, apps, Config } from '../apps';
 import { startApp, getAppStatus } from '../common';
 
@@ -11,7 +11,7 @@ const getConfig = (configPath: string) => {
     }
 };
 
-export const startCommand: Command = {
+export const startCommand: GodCommand = {
     name: 'start',
     async method([appNameOrPath, ..._args], flags) {
         if (!appNameOrPath) {

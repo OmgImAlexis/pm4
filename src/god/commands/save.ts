@@ -1,8 +1,8 @@
-import { Command } from "../../common/types";
+import { GodCommand } from "../../common/types";
 import { apps } from "../apps";
 import { saveApps } from "../common/save-apps";
 
-export const saveCommand: Command = {
+export const saveCommand: GodCommand = {
     name: 'save',
     async method(_args, _flags) {
         saveApps();

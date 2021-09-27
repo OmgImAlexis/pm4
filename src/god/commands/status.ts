@@ -1,8 +1,8 @@
-import { Command } from "../../common/types";
+import { GodCommand } from "../../common/types";
 import { apps } from "../apps";
 import { getAppStatus } from "../common/get-app-status";
 
-export const statusCommand: Command = {
+export const statusCommand: GodCommand = {
     name: 'status',
     async method([appName, ..._args], _flags) {
         // Return status for all apps

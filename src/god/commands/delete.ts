@@ -1,9 +1,9 @@
-import { Command } from "../../common/types";
+import { GodCommand } from "../../common/types";
 import { apps } from "../apps";
 import { saveApps } from "../common/save-apps";
 import { stopApp } from "../common/stop-app";
 
-export const deleteCommand: Command = {
+export const deleteCommand: GodCommand = {
     name: 'delete',
     async method([appName, ..._args], _flags) {
         if (!appName) throw new Error('No app name provided.');
