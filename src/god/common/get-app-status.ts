@@ -6,6 +6,7 @@ import { getPortsUsed } from './get-ports-used';
 
 export const getAppStatus = async (appName: string) => {
     let app = apps.get(appName);
+
     if (!app) {
         throw new Error(`No app found with name \`${appName}\`.`);
     }

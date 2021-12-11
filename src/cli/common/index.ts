@@ -4,6 +4,13 @@ import prettyTime from 'interval-to-human';
 import prettyBytes from "pretty-bytes";
 import { AppInfo } from "../../god/apps";
 
+const statusColours = {
+    CRASHED: red,
+    STARTING: cyan,
+    RUNNING: green,
+    STOPPED: gray
+};
+
 export const createCliTable = (apps: AppInfo[]) => {
     const table = new Table({
         head: ['name', 'mode', 'pid', 'ports', 'uptime', 'restarts', 'status', 'cpu', 'memory', 'user', 'watching'],
@@ -21,12 +28,7 @@ export const createCliTable = (apps: AppInfo[]) => {
             app.ports,
             app.uptime ? prettyTime(app.uptime) : undefined,
             app.restarts,
-            {
-                CRASHED: red,
-                STARTING: cyan,
-                RUNNING: green,
-                STOPPED: gray
-            }[app.status](app.status),
+            Object.keys(statusColours).includes(app.status) ? statusColours[app.status](app.status) : app.status,
             app?.stats?.cpu !== undefined ? `${(app?.stats.cpu / 100).toFixed(2)}%` : undefined,
             app?.stats?.memory ? prettyBytes(app?.stats.memory) : undefined,
             app.user,

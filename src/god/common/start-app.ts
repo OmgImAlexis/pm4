@@ -2,7 +2,7 @@ import { join as joinPath, resolve as resolvePath } from 'path';
 import { createWriteStream, mkdirSync, existsSync } from 'fs';
 import { fork as forkProcess, ChildProcess } from 'child_process';
 import { App, apps, ConfigApp } from '../apps';
-import { logger } from '../common';
+import { getPortsUsed, logger } from '../common';
 import { isDebug, logsPath } from '../../common/config';
 
 export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = true) => {
@@ -110,9 +110,10 @@ export const startApp = async (config: ConfigApp, restarts = 0, shouldRestart = 
                 }
             });
 
-            childProcess.on('message', (message: string) => {
+            childProcess.on('message', async (message: string) => {
                 if (message === 'ready') {
-                    logger.debug('%s is ready', app.name);
+                    const ports = await getPortsUsed(childProcess?.pid);
+                    logger.debug('%s is ready on port%s %s', app.name, ports.length > 1 ? 's' : '', ports.join(', '));
                     apps.set(appName, {
                         ...app,
                         status: 'RUNNING'

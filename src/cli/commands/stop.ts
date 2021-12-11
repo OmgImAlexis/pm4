@@ -22,6 +22,6 @@ export const stopCommand: CliCommand = {
         }
 
         // Return table
-        logger.print(createCliTable([result]));
+        logger.print(createCliTable([result.data]));
     }
 };

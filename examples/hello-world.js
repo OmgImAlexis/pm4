@@ -8,5 +8,5 @@ const server = http.createServer((_request, response) => {
 
 const listener = server.listen(0, () => {
   console.log("server started on %s", listener.address().port);
-  process.send('ready');
+  if (process.send) process.send('ready');
 });
