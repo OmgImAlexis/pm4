@@ -12,7 +12,6 @@ export const stopCommand: CliCommand = {
             // Ensure god returned an AppInfo
             .then(data => AppInfo.safeParseAsync(data));
 
-
         // Validate result
         if (!result.success) throw new Error('Invalid response from god process.');
 

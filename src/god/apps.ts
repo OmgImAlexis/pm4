@@ -24,21 +24,21 @@ export const App = ConfigApp.extend({
     mode: z.enum(['FORK', 'CLUSTER']),
     script: z.string(),
     status: Status,
-    process: z.instanceof(ChildProcess),
+    process: z.instanceof(ChildProcess).optional(),
     restarts: z.number(),
 });
 export type App = z.infer<typeof App>;
 
 export const AppInfo = App.extend({
     mode: z.enum(['FORK', 'CLUSTER']),
-    pid: z.number(),
+    pid: z.number().optional(),
     ports: z.array(z.number()),
-    uptime: z.number(),
+    uptime: z.number().optional(),
     stats: z.object({
-        cpu: z.number(),
-        memory: z.number()
+        cpu: z.number().optional(),
+        memory: z.number().optional()
     }),
-    user: z.string(),
+    user: z.string().optional(),
     watching: z.boolean()
 });
 

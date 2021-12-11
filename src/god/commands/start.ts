@@ -53,7 +53,10 @@ export const startCommand: GodCommand = {
         }
 
         // Start the app
-        if (app.script) await startApp(app);
+        if (app.script) await startApp({
+            ...app,
+            script: app.script
+        });
         
         // Return current status of the app
         return getAppStatus(appNameOrPath);

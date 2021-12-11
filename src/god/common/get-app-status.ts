@@ -18,6 +18,7 @@ export const getAppStatus = async (appName: string) => {
 
     return {
         name: appName,
+        script: app.script, 
         version: app.version,
         mode: app.mode,
         pid: app.process?.pid,
