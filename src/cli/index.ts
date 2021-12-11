@@ -3,7 +3,7 @@ import minimist from 'minimist';
 import AggregateError from 'aggregate-error';
 import { serializeError } from 'serialize-error';
 import locatePath from 'locate-path';
-import { exec as execChildProcess } from 'child_process';
+import { execFile as execChildProcess } from 'child_process';
 import { Aliases, CliCommand, CommandMethod, CommandNames, Commands } from '../common/types';
 import { logger } from './common';
 import psList from 'ps-list';
@@ -52,25 +52,28 @@ const runCommand = async (commandName: CommandNames, args?: Parameters<CommandMe
     }
 };
 
-const isGodProcessRunning = async () => {
+const isGodProcessRunning = async (godPath: string) => {
     const list = await psList();
     const god = list.find(process => {
-        process.name.endsWith('pm4-god') || (process.name === 'node' && process.cmd?.split(' ')[1]?.endsWith('pm4-god')) 
+        return process.name.endsWith('pm4-god') || (process.name === 'node' && process.cmd?.endsWith(godPath)); 
     });
-    return god === undefined;
-}
+    return god !== undefined;
+};
+
+const getGodPath = async () => {
+    return resolveToAbsolutePath(process.env.PM4_GOD_BINARY_LOCATION ?? await locatePath([
+        // Global
+        'pm4-god',
+        // Local
+        './pm4-god',
+        './bin/pm4-god'
+    ]) ?? '').split(' ')[0]; // The split ensures only a single path is run without any args
+};
 
 const ensureGodExists = async () => {
-    const godProcessIsRunning = await isGodProcessRunning();
+    const pm4GodPath = await getGodPath();
+    const godProcessIsRunning = await isGodProcessRunning(pm4GodPath);
     if (!godProcessIsRunning) {
-        const pm4GodPath = resolveToAbsolutePath(process.env.PM4_GOD_BINARY_LOCATION ?? await locatePath([
-            // Global
-            'pm4-god',
-            // Local
-            './pm4-god',
-            './bin/pm4-god'
-        ]) ?? '') ?? undefined;
-
         // Check if we could find a pm4-god binary
         if (!pm4GodPath) {
             throw new Error('pm4-god binary couldn\'t be located.');
@@ -78,7 +81,7 @@ const ensureGodExists = async () => {
 
         return new Promise<void>((resolve, reject) => {
             logger.debug('Spawning god process %s', pm4GodPath);
-            execChildProcess(pm4GodPath, { env: process.env }, (error => {
+            execChildProcess(pm4GodPath, error => {
                 if (error) {
                     if ((error as any).code === 127) {
                         reject(new AggregateError(['pm4-god binary couldn\'t be located.', error]));
@@ -90,7 +93,7 @@ const ensureGodExists = async () => {
                 }
     
                 resolve();
-            }));
+            });
         });
     }
 };
